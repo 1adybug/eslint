@@ -35,9 +35,10 @@ if (hasReact) {
 }
 
 if (hasNext) {
-    const nextVitals = require("eslint-config-next/core-web-vitals")
-    const nextTs = require("eslint-config-next/typescript")
-    configWithExtends.push(...nextVitals, ...nextTs)
+    // 由于 Next.js 暂时不支持 ESLint 10 版本，所以暂时不使用
+    // const nextVitals = require("eslint-config-next/core-web-vitals")
+    // const nextTs = require("eslint-config-next/typescript")
+    // configWithExtends.push(...nextVitals, ...nextTs)
 }
 
 const rules: RulesConfig = {
