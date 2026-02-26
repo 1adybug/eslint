@@ -2,6 +2,7 @@
     "name": "@1adybug/eslint",
     "version": "0.0.0",
     "type": "module",
+    "description": "推荐的 ESLint 配置",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
@@ -17,9 +18,22 @@
     "scripts": {
         "build": "rslib build",
         "dev": "rslib build --watch",
+        "prepublishOnly": "npm run build",
         "format": "prettier --write .",
         "fg": "npm run format && git add . && git commit -m \"✨feature: format\"",
         "prepare": "husky"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.com/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/1adybug/eslint.git"
+    },
+    "homepage": "https://github.com/1adybug/eslint",
+    "bugs": {
+        "url": "https://github.com/1adybug/eslint/issues"
     },
     "devDependencies": {
         "@1adybug/prettier": "^0.0.27",
