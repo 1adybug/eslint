@@ -31,7 +31,7 @@ const configWithExtends: ConfigWithExtends[] = [js.configs.recommended, ...tsesl
 if (hasReact) {
     const reactHooks = require("eslint-plugin-react-hooks")
     const reactRefresh = require("eslint-plugin-react-refresh")
-    configWithExtends.push(reactHooks.configs.flat.recommended, reactRefresh.configs.vite)
+    configWithExtends.push(reactHooks.configs.flat.recommended, reactRefresh.default.configs.vite)
 }
 
 if (hasNext) {
