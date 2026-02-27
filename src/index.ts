@@ -29,14 +29,14 @@ if (hasNext) ignores.push(".next/**", "next-env.d.ts")
 const configWithExtends: ConfigWithExtends[] = [js.configs.recommended, ...tseslint.configs.recommended]
 
 if (hasReact) {
-    const reactHooks = require("eslint-plugin-react-hooks")
-    const reactRefresh = require("eslint-plugin-react-refresh")
+    const reactHooks: typeof import("eslint-plugin-react-hooks") = require("eslint-plugin-react-hooks")
+    const reactRefresh: typeof import("eslint-plugin-react-refresh") = require("eslint-plugin-react-refresh")
     configWithExtends.push(reactHooks.configs.flat.recommended, reactRefresh.default.configs.vite)
 }
 
 if (hasNext) {
-    const nextVitals = require("eslint-config-next/core-web-vitals")
-    const nextTs = require("eslint-config-next/typescript")
+    const nextVitals: typeof import("eslint-config-next/core-web-vitals") = require("eslint-config-next/core-web-vitals")
+    const nextTs: typeof import("eslint-config-next/typescript") = require("eslint-config-next/typescript")
     configWithExtends.push(...nextVitals, ...nextTs)
 }
 
@@ -109,4 +109,6 @@ if (!hasReact) {
     )
 }
 
-export default defineConfig([globalIgnores(ignores), ...configWithExtends, ...appConfig])
+export const config = [globalIgnores(ignores), ...configWithExtends, ...appConfig]
+
+export default defineConfig(config)
