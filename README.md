@@ -1,23 +1,167 @@
-# Rslib project
+# @1adybug/eslint
 
-## Setup
+推荐的 ESLint Flat Config，内置 TypeScript、React、Next.js、Node.js 常见规则，并支持按目录拆分运行时环境。
 
-Install the dependencies:
+## 安装
 
 ```bash
-bun install
+bun add -d eslint @1adybug/eslint
 ```
 
-## Get started
+## 快速开始
 
-Build the library:
+`eslint.config.mjs`
+
+```js
+import config from "@1adybug/eslint"
+
+export default config
+```
+
+## 自定义配置
+
+`eslint.config.mjs`
+
+```js
+import { defineConfig } from "@1adybug/eslint"
+
+export default defineConfig({
+    next: true,
+    react: true,
+    node: {
+        enabled: true,
+        preset: "script",
+    },
+})
+```
+
+## 参数说明
+
+`defineConfig(params)` 支持以下参数：
+
+- `next`: `boolean | FeatureOptions`
+- `react`: `boolean | FeatureOptions`
+- `node`: `boolean | FeatureOptions & { preset?: "script" | "module" | "recommended" | "mixed" }`
+- `target`: `"browser" | "node" | "both"`
+- `directories`: `{ web?: string | string[]; node?: string | string[]; mixed?: string | string[] }`
+- `ignores`: `string | string[]`
+- `rules`: `RulesConfig`
+
+`FeatureOptions`：
+
+- `enabled?: boolean`
+- `recommended?: boolean`
+- `extends?: string | config | (string | config)[]`
+- `rules?: RulesConfig`
+
+## 默认行为（开箱即用）
+
+1. 自动探测依赖  
+   检测到 `next` 时默认启用 Next；检测到 `react`（或启用 Next）时默认启用 React。
+2. `target` 默认推断  
+   Next 项目默认 `"both"`；React 项目默认 `"browser"`；其他默认 `"node"`。
+3. Node 默认启用条件  
+   当 `target !== "browser"` 时默认启用 Node 规则。
+4. 目录默认值  
+   Next + both: `web = ["**/*.{js,mjs,ts,tsx}"]`，`node = ["shared/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]`。  
+   browser: `web = ["**/*.{js,mjs,ts,tsx}"]`。  
+   node: `node = ["**/*.{js,mjs,ts,tsx}"]`。  
+   both: `mixed = ["**/*.{js,mjs,ts,tsx}"]`。
+5. 默认忽略目录  
+   `node_modules/**`, `out/**`, `build/**`, `dist/**`, `public/**`。
+6. Next 额外忽略  
+   `.next/**`, `next-env.d.ts`。
+7. 目录冲突保护  
+   同一个 glob 同时出现在 `web/node/mixed` 会直接报错。
+
+## 示例
+
+### 1) Next 全栈项目（目录分区）
+
+```js
+import { defineConfig } from "@1adybug/eslint"
+
+export default defineConfig({
+    next: true,
+    react: true,
+    node: true,
+    directories: {
+        web: ["apps/web/**/*.{js,mjs,ts,tsx}"],
+        node: ["apps/api/**/*.{js,mjs,ts,tsx}"],
+        mixed: ["packages/shared/**/*.{js,mjs,ts,tsx}"],
+    },
+})
+```
+
+### 2) 纯 React 项目（关闭 Node 规则）
+
+```js
+import { defineConfig } from "@1adybug/eslint"
+
+export default defineConfig({
+    react: true,
+    node: false,
+    target: "browser",
+})
+```
+
+### 3) 纯 Node 库
+
+```js
+import { defineConfig } from "@1adybug/eslint"
+
+export default defineConfig({
+    next: false,
+    react: false,
+    node: {
+        enabled: true,
+        preset: "module",
+        rules: {
+            "n/no-process-exit": "off",
+        },
+    },
+    target: "node",
+})
+```
+
+## Monorepo 使用
+
+### 1) 根目录统一配置（规则基本一致时）
+
+```js
+import { defineConfig } from "@1adybug/eslint"
+
+export default defineConfig({
+    next: true,
+    react: true,
+    node: { enabled: true, preset: "module" },
+    directories: {
+        web: ["apps/web/**/*.{js,mjs,ts,tsx}", "apps/admin/**/*.{js,mjs,ts,tsx}"],
+        node: ["apps/api/**/*.{js,mjs,ts,tsx}", "tools/**/*.{js,mjs,ts,tsx}"],
+        mixed: ["packages/**/*.{js,mjs,ts,tsx}"],
+    },
+    ignores: ["**/dist/**", "**/.turbo/**", "**/coverage/**"],
+})
+```
+
+注意：
+
+1. 同一个 glob 不能同时出现在 `web/node/mixed`，否则会报错。
+2. `next: true` 时，Next 规则会应用到 `web + mixed` 目录。
+
+### 2) 根配置 + 子项目配置（只有部分应用是 Next 时）
+
+建议做法：
+
+1. 根目录配置通用规则，`next: false`。
+2. `apps/web` 单独 `eslint.config.mjs` 开启 `next: true`。
+3. `apps/api` 单独配置 `node` 规则。
+
+这样可以避免把 Next 规则应用到非 Next 项目。
+
+## 本仓库开发命令
 
 ```bash
 bun run build
-```
-
-Build the library in watch mode:
-
-```bash
 bun run dev
 ```
