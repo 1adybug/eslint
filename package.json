@@ -36,27 +36,27 @@
         "url": "https://github.com/1adybug/eslint/issues"
     },
     "dependencies": {
-        "@eslint/js": "^9.39.3",
+        "@eslint/js": "^9.39.4",
         "eslint-config-next": "^16.1.6",
         "eslint-plugin-n": "^17.24.0",
         "eslint-plugin-react-hooks": "^7.0.1",
         "eslint-plugin-react-refresh": "^0.5.2",
-        "globals": "^17.3.0",
+        "globals": "^17.4.0",
         "typescript-eslint": "^8.56.1"
     },
     "devDependencies": {
         "@1adybug/prettier": "^0.0.27",
-        "@eslint/config-helpers": "^0.5.2",
-        "@eslint/core": "^1.1.0",
+        "@eslint/config-helpers": "^0.5.3",
+        "@eslint/core": "^1.1.1",
         "@rslib/core": "^0.19.6",
-        "@types/node": "^24.10.13",
+        "@types/node": "^24.12.0",
         "husky": "^9.1.7",
-        "lint-staged": "^16.2.7",
+        "lint-staged": "^16.3.2",
         "prettier": "^3.8.1",
         "typescript": "^5.9.3"
     },
     "peerDependencies": {
-        "eslint": "^9.39.3"
+        "eslint": "^9.39.4"
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
