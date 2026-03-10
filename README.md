@@ -63,7 +63,7 @@ export default defineConfig({
 3. Node 默认启用条件  
    当 `target !== "browser"` 时默认启用 Node 规则。
 4. 目录默认值  
-   Next + both: `web = ["**/*.{js,mjs,ts,tsx}"]`，`node = ["shared/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]`。  
+   Next + both: `web = ["**/*.{js,mjs,ts,tsx}"]`，`node = ["shared/**/*.{js,mjs,ts,tsx}", "prisma/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]`。  
    browser: `web = ["**/*.{js,mjs,ts,tsx}"]`。  
    node: `node = ["**/*.{js,mjs,ts,tsx}"]`。  
    both: `mixed = ["**/*.{js,mjs,ts,tsx}"]`。

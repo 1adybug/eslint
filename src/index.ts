@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url)
 
 const allFiles = ["**/*.{js,mjs,ts,tsx}"]
 
-const nextDefaultNodeFiles = ["shared/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]
+const nextDefaultNodeFiles = ["shared/**/*.{js,mjs,ts,tsx}", "prisma/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]
 
 const defaultIgnores = ["node_modules/**", "out/**", "build/**", "dist/**", "public/**"]
 
@@ -45,6 +45,12 @@ const defaultRules: RulesConfig = {
             destructuring: "any",
         },
     ],
+}
+
+const defaultNodeRules: RulesConfig = {
+    "n/no-missing-import": "off",
+    "n/no-missing-require": "off",
+    "n/no-unsupported-features/node-builtins": "off",
 }
 
 type MaybeArray<T> = T | T[]
@@ -391,10 +397,15 @@ export function defineConfig({ next, react, node, target, directories, ignores, 
         ...reactFeature.rules,
     }
 
-    const nodeRules: RulesConfig = { ...mergedBaseRules, ...(nodeFeature.enabled ? nodeFeature.rules : {}) }
+    const nodeRules: RulesConfig = {
+        ...mergedBaseRules,
+        ...(nodeFeature.enabled ? defaultNodeRules : {}),
+        ...(nodeFeature.enabled ? nodeFeature.rules : {}),
+    }
 
     const mixedRules: RulesConfig = {
         ...browserRules,
+        ...(nodeFeature.enabled ? defaultNodeRules : {}),
         ...(nodeFeature.enabled ? nodeFeature.rules : {}),
     }
 
