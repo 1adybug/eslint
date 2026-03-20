@@ -31,6 +31,7 @@ export default defineConfig({
     node: {
         enabled: true,
         preset: "script",
+        version: ">=24.0.0",
     },
 })
 ```
@@ -41,7 +42,7 @@ export default defineConfig({
 
 - `next`: `boolean | FeatureOptions`
 - `react`: `boolean | FeatureOptions`
-- `node`: `boolean | FeatureOptions & { preset?: "script" | "module" | "recommended" | "mixed" }`
+- `node`: `boolean | FeatureOptions & { preset?: "script" | "module" | "recommended" | "mixed"; version?: string }`
 - `target`: `"browser" | "node" | "both"`
 - `directories`: `{ web?: string | string[]; node?: string | string[]; mixed?: string | string[] }`
 - `ignores`: `string | string[]`
@@ -62,18 +63,20 @@ export default defineConfig({
    Next 项目默认 `"both"`；React 项目默认 `"browser"`；其他默认 `"node"`。
 3. Node 默认启用条件  
    当 `target !== "browser"` 时默认启用 Node 规则。
-4. 目录默认值  
+4. Node 默认版本  
+   目标项目未配置 `package.json.engines.node` 时，默认按 `>=24.0.0` 处理；可通过 `node.version` 覆盖。
+5. 目录默认值  
    Next + both: `web = ["**/*.{js,mjs,ts,tsx}"]`，`node = ["shared/**/*.{js,mjs,ts,tsx}", "prisma/**/*.{js,mjs,ts,tsx}", "server/**/*.{js,mjs,ts,tsx}"]`。  
    browser: `web = ["**/*.{js,mjs,ts,tsx}"]`。  
    node: `node = ["**/*.{js,mjs,ts,tsx}"]`。  
    both: `mixed = ["**/*.{js,mjs,ts,tsx}"]`。
-5. 默认忽略目录  
+6. 默认忽略目录  
    `node_modules/**`, `out/**`, `build/**`, `dist/**`, `public/**`。
-6. Next 额外忽略  
+7. Next 额外忽略  
    `.next/**`, `next-env.d.ts`。
-7. 目录冲突保护  
+8. 目录冲突保护  
    同一个 glob 同时出现在 `web/node/mixed` 会直接报错。
-8. TypeScript 默认弃用检查  
+9. TypeScript 默认弃用检查  
    TypeScript 文件默认开启 `@typescript-eslint/no-deprecated`，并自动启用 `projectService`；JavaScript 与声明文件不会应用这条规则。
 
 ## 示例
@@ -118,6 +121,7 @@ export default defineConfig({
     node: {
         enabled: true,
         preset: "module",
+        version: ">=24.0.0",
         rules: {
             "n/no-process-exit": "off",
         },

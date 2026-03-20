@@ -53,6 +53,8 @@ const defaultTypeAwareRules: RulesConfig = {
     "@typescript-eslint/no-deprecated": "error",
 }
 
+const defaultNodeVersion = ">=24.0.0"
+
 const defaultNodeRules: RulesConfig = {
     "n/no-missing-import": "off",
     "n/no-missing-require": "off",
@@ -104,6 +106,7 @@ export interface ReactFeatureOptions extends BaseFeatureOptions {}
 
 export interface NodeFeatureOptions extends BaseFeatureOptions {
     preset?: NodePreset
+    version?: string
 }
 
 export interface RuntimeDirectories {
@@ -328,6 +331,13 @@ function createRuntimeConfig(files: string[], runtimeTarget: RuntimeTarget, rule
     }
 }
 
+function createNodeVersionSettings(version: string) {
+    return {
+        n: { version },
+        node: { version },
+    }
+}
+
 function createTypeAwareConfig(scopes: FeatureScope[], rules: RulesConfig) {
     if (Object.keys(rules).length === 0) return []
 
@@ -351,6 +361,7 @@ export function defineConfig({ next, react, node, target, directories, ignores, 
     const reactFeature = resolveFeature(react, hasDependency("react") || nextFeature.enabled)
     const resolvedTarget = target ?? getDefaultTarget(nextFeature.enabled, reactFeature.enabled)
     const nodeFeature = resolveFeature(node, resolvedTarget !== "browser")
+    const nodeVersion = nodeFeature.options.version ?? defaultNodeVersion
 
     const defaultDirectories = getDefaultDirectories(nextFeature.enabled, resolvedTarget)
     const resolvedDirectories = resolveDirectories(directories, defaultDirectories)
@@ -441,8 +452,20 @@ export function defineConfig({ next, react, node, target, directories, ignores, 
     const appConfig: ConfigWithExtends[] = []
 
     if (resolvedDirectories.web.length > 0) appConfig.push(createRuntimeConfig(resolvedDirectories.web, "browser", browserRules, webIgnores))
-    if (resolvedDirectories.node.length > 0) appConfig.push(createRuntimeConfig(resolvedDirectories.node, "node", nodeRules))
-    if (resolvedDirectories.mixed.length > 0) appConfig.push(createRuntimeConfig(resolvedDirectories.mixed, "both", mixedRules))
+
+    if (resolvedDirectories.node.length > 0) {
+        appConfig.push({
+            ...createRuntimeConfig(resolvedDirectories.node, "node", nodeRules),
+            settings: createNodeVersionSettings(nodeVersion),
+        })
+    }
+
+    if (resolvedDirectories.mixed.length > 0) {
+        appConfig.push({
+            ...createRuntimeConfig(resolvedDirectories.mixed, "both", mixedRules),
+            ...(nodeFeature.enabled ? { settings: createNodeVersionSettings(nodeVersion) } : {}),
+        })
+    }
 
     const config = [globalIgnores(resolvedIgnores), ...configWithExtends, ...appConfig]
 
