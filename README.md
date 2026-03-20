@@ -73,6 +73,8 @@ export default defineConfig({
    `.next/**`, `next-env.d.ts`。
 7. 目录冲突保护  
    同一个 glob 同时出现在 `web/node/mixed` 会直接报错。
+8. TypeScript 默认弃用检查  
+   TypeScript 文件默认开启 `@typescript-eslint/no-deprecated`，并自动启用 `projectService`；JavaScript 与声明文件不会应用这条规则。
 
 ## 示例
 

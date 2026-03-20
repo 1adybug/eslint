@@ -15,6 +15,8 @@ const nextDefaultNodeFiles = ["shared/**/*.{js,mjs,ts,tsx}", "prisma/**/*.{js,mj
 
 const defaultIgnores = ["node_modules/**", "out/**", "build/**", "dist/**", "public/**"]
 
+const typeAwareIgnores = ["**/*.{js,jsx,mjs,cjs}", "**/*.d.{ts,tsx,mts,cts}"]
+
 const dependencyCache = new Map<string, boolean>()
 const moduleCache = new Map<string, unknown>()
 const nodePresetToConfigKey = {
@@ -45,6 +47,10 @@ const defaultRules: RulesConfig = {
             destructuring: "any",
         },
     ],
+}
+
+const defaultTypeAwareRules: RulesConfig = {
+    "@typescript-eslint/no-deprecated": "error",
 }
 
 const defaultNodeRules: RulesConfig = {
@@ -322,6 +328,24 @@ function createRuntimeConfig(files: string[], runtimeTarget: RuntimeTarget, rule
     }
 }
 
+function createTypeAwareConfig(scopes: FeatureScope[], rules: RulesConfig) {
+    if (Object.keys(rules).length === 0) return []
+
+    return normalizeScopes(scopes).map<ConfigWithExtends>(scope => ({
+        files: scope.files,
+        ignores: unique([...(scope.ignores ?? []), ...typeAwareIgnores]),
+        plugins: {
+            "@typescript-eslint": tseslint.plugin,
+        },
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+            },
+        },
+        rules,
+    }))
+}
+
 export function defineConfig({ next, react, node, target, directories, ignores, rules }: DefineConfigParams = {}) {
     const nextFeature = resolveFeature(next, hasDependency("next"))
     const reactFeature = resolveFeature(react, hasDependency("react") || nextFeature.enabled)
@@ -385,6 +409,11 @@ export function defineConfig({ next, react, node, target, directories, ignores, 
         ...(rules ?? {}),
     }
 
+    const typeAwareRules: RulesConfig = {
+        ...defaultTypeAwareRules,
+        ...("@typescript-eslint/no-deprecated" in (rules ?? {}) ? { "@typescript-eslint/no-deprecated": rules?.["@typescript-eslint/no-deprecated"] } : {}),
+    }
+
     const browserRules: RulesConfig = {
         ...mergedBaseRules,
         ...(reactFeature.enabled && reactFeature.recommended
@@ -416,6 +445,8 @@ export function defineConfig({ next, react, node, target, directories, ignores, 
     if (resolvedDirectories.mixed.length > 0) appConfig.push(createRuntimeConfig(resolvedDirectories.mixed, "both", mixedRules))
 
     const config = [globalIgnores(resolvedIgnores), ...configWithExtends, ...appConfig]
+
+    config.push(...createTypeAwareConfig(baseScopes, typeAwareRules))
 
     return _defineConfig(config)
 }
