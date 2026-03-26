@@ -26,6 +26,10 @@ const nodePresetToConfigKey = {
     mixed: "flat/mixed-esm-and-cjs",
 } as const
 
+const noInlineObjectTypeMessage = "Avoid inline object type literals. Define a type or interface first."
+
+const noInlineObjectTypeSelector = "TSTypeLiteral:not(TSTypeAliasDeclaration > TSTypeLiteral)"
+
 const defaultRules: RulesConfig = {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-empty-object-type": "off",
@@ -45,6 +49,13 @@ const defaultRules: RulesConfig = {
         "off",
         {
             destructuring: "any",
+        },
+    ],
+    "no-restricted-syntax": [
+        "warn",
+        {
+            selector: noInlineObjectTypeSelector,
+            message: noInlineObjectTypeMessage,
         },
     ],
 }

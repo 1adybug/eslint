@@ -78,6 +78,8 @@ export default defineConfig({
    同一个 glob 同时出现在 `web/node/mixed` 会直接报错。
 9. TypeScript 默认弃用检查  
    TypeScript 文件默认开启 `@typescript-eslint/no-deprecated`，并自动启用 `projectService`；JavaScript 与声明文件不会应用这条规则。
+10. 内联对象类型提示  
+    默认对 `const info: { name: string } = { name: "tom" }`、`function getName({ name }: { name: string }) {}` 这类内联对象类型给出警告，建议先提取为 `type` 或 `interface`。
 
 ## 示例
 
